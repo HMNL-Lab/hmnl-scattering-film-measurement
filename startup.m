@@ -12,9 +12,11 @@ clear;clf;close all;clc;
 % Maintainer: Qianqian Fang <fangqq@gmail.com>
 
 % Get current path (pwd = present working directory)
-paths = fullfile(pwd, {'jsonlab-2.0'});
+paths = fullfile(pwd, {'jsonlab-2.0', 'functions'});
 
 % add paths to MATLAB search path
 for i = 1:length(paths)
     addpath(paths{i});
 end
+
+clear;clc
