@@ -70,8 +70,9 @@ else
         clear data
     end
 end
-batch = saveTo_fullpath;
 
+batch = saveTo_fullpath';
+T = array2table(batch,'VariableNames',{'JSON path'});
 saveToCSV = input('Save this batch to CSV file? [Y/N] ', 's');
 if saveToCSV == 'Y'
     csv_exportFile = input('Enter output file name: ', 's');
