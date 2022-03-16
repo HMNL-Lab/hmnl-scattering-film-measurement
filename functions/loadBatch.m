@@ -9,6 +9,11 @@ else
     raw = importdata(fullpath);
     batch = raw(2:end);
     batch = convertCharsToStrings(batch);
+    try
+        [~] = loadjson(batch(1));
+    catch
+        error("At least 1 JSON file in CSV does not exist. Please recreate batch.")
+    end
 end
 end
 
