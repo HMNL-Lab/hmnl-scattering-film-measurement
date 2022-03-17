@@ -14,10 +14,11 @@ else
     field   = strings(1, length(files));
     mode    = strings(1, length(files));
     sample_pos    = strings(1, length(files));
+    load_name    = strings(1, length(files));
     %    disp(['User selected ', fullfile(path,file)]);
     for i = length(files):-1:1 %struct size is created on first instance
         %         path to load image from
-        load_name = fullfile(path,files(i));
+        load_name(i) = fullfile(path,files(i));
         % get file name of image to extract sample, position, etc info from
         % convert to string
         filename = string(files(i));
@@ -31,7 +32,7 @@ else
         mode(i)     = filename(4);
         
         % load image information
-        info(i) = imfinfo(string(load_name));
+%         info(i) = imfinfo(string(load_name));
         msg = join(['Loaded metadata for', files(i)]);
         disp(msg{1});
         sample_pos(i) = join([sample(i), pos(i)], "_");
@@ -44,7 +45,7 @@ else
         load_idx = (i == ic);
         for j = 1:length(load_idx)
             if load_idx(j) == 1
-                data.(field(j)).(mode(j)) = info(j);
+                data.(field(j)).(mode(j)) = imfinfo(string(load_name(j)));
             end
         end
         data.Sample     = sample(ia(i));
