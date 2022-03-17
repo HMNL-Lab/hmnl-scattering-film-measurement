@@ -7,5 +7,9 @@ batch = intializeImages();
 %% Step 2b. Load images from batch CSV file.
 batch = loadBatch();
 %% Step 3a. Canny Method
+%% Step 3a.1.
 % Assumes that images have been corrected in their rotation so that the
 % spray is vertical
+% First, load user selected positioning information into JSON files
+userCoordsToJSON();
+%% Step 3a.2.
