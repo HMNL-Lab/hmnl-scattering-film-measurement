@@ -1,5 +1,5 @@
 function [] = userCoordsToJSON()
-[csvFiles, path] = uigetfile('*.csv', 'Select batch CSV file: ','MultiSelect','on');
+[csvFiles, path] = uigetfile('*.csv', 'Select CSV files created through ImageJ script: ','MultiSelect','on');
 init_dir = pwd;
 if isequal(csvFiles,0)
     disp('User selected Cancel');
