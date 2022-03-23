@@ -14,7 +14,9 @@ for i = 1:length(modes_idx)
     if modes_idx(i)
         subfields = convertCharsToStrings(fieldnames(data.(data_fnames(i))));
         for j = 1:length(subfields)
-            data.(data_fnames(i)).(subfields(j)).Image = imread(data.(data_fnames(i)).(subfields(j)).Filename);
+            if strcmp(subfields(j), "reflect") | strcmp(subfields(j), "trans")
+                data.(data_fnames(i)).(subfields(j)).Image = imread(data.(data_fnames(i)).(subfields(j)).Filename);
+            end
         end
     end
 end
