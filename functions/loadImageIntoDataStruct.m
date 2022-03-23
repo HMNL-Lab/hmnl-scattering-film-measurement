@@ -1,4 +1,4 @@
-function [data] = loadImageIntoDataStruct(jsonFilePath)
+function [data, isImageExist] = loadImageIntoDataStruct(jsonFilePath)
 data = loadjson(jsonFilePath);
 % field names in struct data
 data_fnames = convertCharsToStrings(fieldnames(data));
@@ -16,6 +16,7 @@ for i = 1:length(modes_idx)
         for j = 1:length(subfields)
             if strcmp(subfields(j), "reflect") | strcmp(subfields(j), "trans")
                 data.(data_fnames(i)).(subfields(j)).Image = imread(data.(data_fnames(i)).(subfields(j)).Filename);
+                isImageExist.(data_fnames(i)).(subfields(j)) = true;
             end
         end
     end
