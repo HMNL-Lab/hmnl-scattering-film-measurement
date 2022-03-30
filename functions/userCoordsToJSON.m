@@ -52,7 +52,7 @@ else
                 M = [cosd(data.(m).Angle), -sind(data.(m).Angle); sind(data.(m).Angle), cosd(data.(m).Angle)];
                 data.(m).reflect.UserSelectedCoord = M * data.(m).reflect.UserSelectedCoordNoRotationCorrection;
                 data.(m).reflect.UserSelectedX  = round(data.(m).reflect.UserSelectedCoord(1));
-                data.(m).trans.userSelectedX    = round(data.(m).trans.UserSelectedCoord(1));
+                data.(m).trans.UserSelectedX    = round(data.(m).trans.UserSelectedCoord(1));
             end
             clear csvData
         end
