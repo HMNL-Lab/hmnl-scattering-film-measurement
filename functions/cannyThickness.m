@@ -158,5 +158,7 @@ end
 
 % save data into same file
 [~] = savejson('', data, char(jsonFilePath));
+msg = join(["Successfully saved ", jsonFilePath], "");
+disp(msg);
 end
 
