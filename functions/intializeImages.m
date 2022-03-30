@@ -73,7 +73,7 @@ else
 end
 
 batch = saveTo_fullpath';
-T = array2table(batch,'VariableNames',{'JSON path'});
+T = array2table(batch,'VariableNames',{'JSON_path'}); %needs an underscore in R2019a
 saveToCSV = input('Save this batch to CSV file? [Y/N] ', 's');
 if saveToCSV == 'Y'
     csv_exportFile = input('Enter output file name: ', 's');
