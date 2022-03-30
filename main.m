@@ -21,7 +21,7 @@ opts.width = 40;
 opts.cannyThreshold = [0.01 0.2];
 % Gaussian standard deviation of filter
 opts.cannyStd = 10;
-for i = length(batch)
+for i = 1:length(batch)
     % data is saved to same location as selected file
     [~] = cannyThickness(batch(i), opts);
 end
