@@ -15,6 +15,7 @@ for i = 1:length(modes_idx)
         subfields = convertCharsToStrings(fieldnames(data.(data_fnames(i))));
         subfields_idx = "reflect" == subfields | "trans" == subfields;
         if subfields_idx == zeros(length(subfields_idx), 1)
+%             throw error if no reflect or trans
             msg = join(["Sub-struct in mode", data_fnames(i), "in file", jsonFilePath, "does not contain fields 'reflect' or 'trans'. Please check JSON files."], " ");
             error(msg);
         end
