@@ -1,3 +1,4 @@
 # Ignore test-scripts directory
 test-scripts
 *.asv
+*.ipynb
