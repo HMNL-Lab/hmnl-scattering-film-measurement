@@ -2,4 +2,4 @@
 test-scripts
 *.asv
 *.ipynb
-__pycache__
+__pycache__/
