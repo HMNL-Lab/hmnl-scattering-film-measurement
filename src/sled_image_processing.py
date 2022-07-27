@@ -5,8 +5,9 @@ import typing
 import pathlib
 from dataclasses import dataclass
 import logging
+import os
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 @dataclass
 class CannyParameters:
@@ -71,17 +72,33 @@ class CannyParameters:
         return self.reflection_gray, self.transmission_gray
 
     def background_subtract(self) -> np.ndarray:
-        self.diff_image = self.reflection_image - self.transmission_image
-        logging.debug("background substracted transmission from reflection")
-        return self.diff_image
+        """
+        Subtracts the reflection grayscale image from transmission grayscale image
+
+        Args:
+        - instance of the CannyParameter class with CannyParameter.reflection_gray != None and CannyParameter.transmission_gray != None
+
+        Returns:
+        - `self.diff_image`
+            - type: `np.ndarray`
+            - shape: width x height 
+            TODO: check actual shape
+        """
+        if self.reflection_gray.any() == None or self.transmission_gray.any() == None:
+            raise RuntimeError("self.reflection_gray and self.transmission_gray must exist. Create them by calling CannyParameters.images_to_grayscale()")
+        else:
+            self.diff_image = self.reflection_gray - self.transmission_gray
+            logging.debug("background substracted transmission from reflection")
+            return self.diff_image
+            
     
-    def instantiate_meta_parameters(self, search_width: int, canny_threshold: np.ndarray, canny_std: float) -> None:
+    def instantiate_meta_parameters(self, search_width: int, canny_threshold: np.ndarray, aperture_size: float) -> None:
         self.search_width = search_width
         self.radius = round(self.search_width / 2.0)
         self.crop_region_start = round(self.reflection_pos[0] - self.radius)
         self.crop_region_stop  = round(self.transmission_pos[0] + self.radius)
         self.canny_threshold = canny_threshold
-        self.canny_std = canny_std
+        self.aperture_size = aperture_size
         logging.debug("instantiate canny parameters")
 
     def crop_grayscale_image(self, img: np.ndarray) -> np.ndarray:
@@ -90,13 +107,13 @@ class CannyParameters:
         return self.cropped_image
 
     def find_grayscale_edge_thickness(self, img: np.ndarray) -> np.ndarray:
-        self.edge_image = cv2.Canny(img, self.canny_threshold[0], self.canny_threshold[1], self.canny_std)
+        self.edge_image = cv2.Canny(img, self.canny_threshold[0], self.canny_threshold[1], self.aperture_size)
         self.thickness = self.thickness_array(self.edge_image)
         self.thickness = self.thickness / self.conversion
         self.mean = np.mean(self.thickness)
         self.std = np.std(self.thickness)
-        self.min = np.minimum(self.thickness)
-        self.max = np.maximum(self.thickness)
+        self.min = min(self.thickness)
+        self.max = max(self.thickness)
         self.n = self.thickness.shape[0]
         logging.debug("found thickness")
 
@@ -104,19 +121,17 @@ class CannyParameters:
 
     def thickness_array(self, bool_img: np.ndarray) -> typing.Union[np.ndarray, None]:
         rows, cols = bool_img.shape
-        idx = 1
         edgePt = []
         thickness = []
         for i in range(rows):
             for j in range(cols):
-                if bool_img[i, j] == 1:
-                    edgePt[idx] = j
-                    idx += 1
-            idx = 1
+                if bool_img[i, j] == 255:
+                    edgePt.append(j)
             if np.shape(edgePt)[0] != 0:
                 thickness.append(max(edgePt) - min(edgePt))
+            edgePt = []
         try:
-            thickness = np.ndarray()
+            thickness = np.array(thickness)
             thickness = thickness[thickness != 0]
             return thickness
         except Exception:
@@ -155,7 +170,7 @@ class SLEDImageProcessing:
         )
         return self.canny_data_parameters
 
-    def canny_method(self, data: CannyParameters) -> CannyParameters:
+    def canny_method(self, data: CannyParameters, search_width: int, canny_threshold: np.ndarray, aperture_size: float) -> CannyParameters:
         # rotation matrix needed for reflection position
         data.angle_deg2rad()
         data.get_rotation_correct_reflection_postion()        
@@ -165,11 +180,11 @@ class SLEDImageProcessing:
         data.check_image_dimensions()
         data.images_to_grayscale()
         data.background_subtract()
-        data.instantiate_meta_parameters(search_width=40,
-                                        canny_threshold=np.array([0.01*255, 0.2*255]),
-                                        canny_std=10.0)
+        data.instantiate_meta_parameters(search_width=search_width,
+                                        canny_threshold=canny_threshold,
+                                        aperture_size=aperture_size)
         data.crop_grayscale_image(data.diff_image)
-        # data.find_grayscale_edge_thickness(data.cropped_image)
+        data.cropped_image = cv2.GaussianBlur(data.cropped_image, (5, 5), 0)
+        data.cropped_image = cv2.GaussianBlur(data.cropped_image, (5, 5), 0)
+        data.find_grayscale_edge_thickness(data.cropped_image)
         return data
-
-
