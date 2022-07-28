@@ -36,7 +36,7 @@
 %
 % ASSUMPTIONS AND LIMITATIONS:
 %   Assumes that images have been corrected for rotation ImageJ macro matlab\imagej_macro\trans-reflect-rotation-correction.ijm.
-%   By default, images that 
+%   By default, processed images of the ImageJ macro are stored \data\images\processed
 %
 % REVISION HISTORY:
 %   26/07/2022 - Noah McAllister
