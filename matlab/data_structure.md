@@ -1,7 +1,7 @@
 TODO: 
  - [ ] no absolute paths in the CSV
- - [ ] correct the reflection position
- - [ ] porting script to update old CSVs
+ - [x] correct the reflection position in ImageJ macro
+ - [x] porting script to update old CSVs
 
 - parameters
   - method_type: "ImageJ_Canny"
