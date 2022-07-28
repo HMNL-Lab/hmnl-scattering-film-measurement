@@ -4,3 +4,4 @@ test-scripts
 *.ipynb
 __pycache__/
 old/
+data/
