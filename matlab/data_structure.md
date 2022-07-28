@@ -1,0 +1,21 @@
+TODO: 
+ - [ ] no absolute paths in the CSV
+ - [ ] correct the reflection position
+
+- parameters
+  - method_type: "ImageJ_Canny"
+  - args:
+    - reflection_image: double
+    - transmission_image: double
+    - reflection_image_path: string
+    - transmission_image_path: string
+    - reflection_x1: float
+    - reflection_y1: float
+    - reflection_x2: float
+    - reflection_y2: float
+    - transmission_x1: float
+    - transmission_y1: float
+    - transmission_x2: float
+    - transmission_y2: float
+    - angle_degree: float
+    - conversion: float
