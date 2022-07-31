@@ -16,13 +16,13 @@ angle = 90 + (180.0/PI)*atan2(y1r-y2r, x2r-x1r); // in degrees
 run("Rotate... ", "angle="+angle+" grid=1 interpolation=None");
 
 // correct reflection position for angle
-angle_rad = angle * PI / 180
+angle_rad = angle * PI / 180;
 
-x1r = x1r * cos(angle_rad) - y1r * sin(angle_rad)
-y1r = x1r * sin(angle_rad) + y1r * cos(angle_rad)
+x1r = x1r * cos(angle_rad) - y1r * sin(angle_rad);
+y1r = x1r * sin(angle_rad) + y1r * cos(angle_rad);
 
-x2r = x2r * cos(angle_rad) - y2r * sin(angle_rad)
-y2r = x2r * sin(angle_rad) + y2r * cos(angle_rad)
+x2r = x2r * cos(angle_rad) - y2r * sin(angle_rad);
+y2r = x2r * sin(angle_rad) + y2r * cos(angle_rad);
 
 
 // WARNING: overwrites files
@@ -60,7 +60,10 @@ setResult("Reflection", 0, path1);
 setResult("Transmission", 0, path2);
 
 //setOption("ShowRowNumbers", false)
+dir = File.getDirectory(path1);
 //updateResults;
-saveAs("Results", path1+".csv");
+
+sample_name = File.getNameWithoutExtension(path1);
+saveAs("Results", dir+sample_name+".csv");
 close("*");
 //run("Close");
