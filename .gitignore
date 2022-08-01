@@ -5,3 +5,5 @@ test-scripts
 __pycache__/
 old/
 data/
+example/
+python/
