@@ -9,7 +9,7 @@ TODO:
  - [ ] edge visualization script
  - [ ] to table script
  - [ ] save parameter struct into data
- - [ ] doc strings for cany_measurement
+ - [x] doc strings for cany_measurement
 
 - parameters
   - method_type: "ImageJ_Canny"
