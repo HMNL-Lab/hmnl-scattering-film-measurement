@@ -1,10 +1,15 @@
 TODO: 
- - [ ] no absolute paths in the CSV
+ - [x] no absolute paths in the CSV
+   - fixed by running the imagej function locally 
  - [x] correct the reflection position in ImageJ macro
  - [x] porting script to update old CSVs
  - [ ] sample labeling necessary??
  - [ ] where to store images
- - [ ] background subtraction methods
+ - [x] background subtraction methods
+ - [ ] edge visualization script
+ - [ ] to table script
+ - [ ] save parameter struct into data
+ - [ ] doc strings for cany_measurement
 
 - parameters
   - method_type: "ImageJ_Canny"
