@@ -3,12 +3,16 @@ TODO:
    - fixed by running the imagej function locally 
  - [x] correct the reflection position in ImageJ macro
  - [x] porting script to update old CSVs
- - [ ] sample labeling necessary??
- - [ ] where to store images
+ - [x] sample labeling necessary??
+   - fixed by using the fileparts() method 
+ - [x] where to store images
+   - see /data/images directory
  - [x] background subtraction methods
+ - [x] save data
+ - [x] read data
  - [ ] edge visualization script
  - [ ] to table script
- - [ ] save parameter struct into data
+ - [x] save parameter struct into data
  - [x] doc strings for cany_measurement
 
 - parameters
