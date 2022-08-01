@@ -26,12 +26,14 @@ function [data] = read_data_from_h5_or_json(filepath)
         filepath (1,1) string {mustBeFile}
     end
 
-    [~,~,ext] = fileparts(filepath);
+    [~,sample_name,ext] = fileparts(filepath);
     if strcmpi(ext, ".h5")
         tmp = loadh5(filepath);
         data = tmp.data;
+        fprintf('Loaded Sample %s ! \nLoaded from %s \n\n', sample_name, filepath)
     elseif strcmpi(ext, ".json")
         data = loadjson(filepath);
+        fprintf('Loaded Sample %s! \nLoaded from %s \n\n', sample_name, filepath)
     else
         error('File type must be .h5 or .json');
     end
