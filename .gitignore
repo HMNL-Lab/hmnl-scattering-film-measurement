@@ -8,3 +8,5 @@ data/
 example/
 python/
 matlab/jsonlab-2.0/
+matlab/jsonlab/
+matlab/easyh5/
