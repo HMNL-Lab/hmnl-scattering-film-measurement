@@ -8,7 +8,7 @@
 % OUTPUT:
 %
 % ASSUMPTIONS AND LIMITATIONS:
-%   Assumes that images have been corrected for rotation ImageJ macro matlab\imagej_macro\trans-reflect-rotation-correction.ijm.
+%   Assumes that images have been corrected for rotation via ImageJ macro matlab\imagej_macro\trans-reflect-rotation-correction.ijm.
 %   By default, processed images of the ImageJ macro are stored \data\images\processed
 %
 % REVISION HISTORY:
@@ -34,10 +34,10 @@ function [data] = canny_measurement(parameter_struct)
     data.cropRegion.x1 = round(parameter_struct.args.reflection_pos1(1) - parameter_struct.args.radius);
     data.cropRegion.x2 = round(parameter_struct.args.transmission_pos1(1) + parameter_struct.args.radius);
 
-    if strcmp(parameter_struct.args.background_subtraction, "none")
+    if strcmpi(parameter_struct.args.background_subtraction, "none")
         % uses just the reflection image
         diff.color = r_image.color;        
-    elseif strcmp(parameter_struct.args.background_subtraction, "imsubtract")
+    elseif strcmpi(parameter_struct.args.background_subtraction, "imsubtract")
         % take the difference between the reflection and transmission using imsubtract
         diff.color = imsubtract(r_image.color, t_image.color);
     end
@@ -62,29 +62,14 @@ function [data] = canny_measurement(parameter_struct)
     data.min = min(data.thickness);
     data.max = max(data.thickness);
     data.n = length(data.thickness);
-
-    % saveTo = strcat({dir, '\', exportFile, '-canny.json'});
-    % saveTo = strjoin([string(dir), "\", string(exportFile), ".json"], '');
-    % if isfile(saveTo)
-    %     warning('File exists.')
-    %     str = input('[Y/N] to overwrite: ', 's');
-    %     if str == 'Y'
-    %         [~] = savejson('',data, char(saveTo));
-    %         disp('Data successfully saved!');
-    %     else
-    %         disp('Operation cancelled.');
-    %     end
-    % else
-    %     [~] = savejson('', data, char(saveTo));
-    %     disp('Data successfully saved!');
-    % end
-
+    data.parameters = parameter_struct;
 
     function [thickness] = thicknessArray(cannyImage)
     [rows,cols] = size(cannyImage);
     idx = 1;
     thickidx = 1;
     edgePt = [];
+    thickness = [];
     for i = 1:rows
         for j = 1:cols
             if cannyImage(i,j) == 1
@@ -99,7 +84,7 @@ function [data] = canny_measurement(parameter_struct)
         thickidx = thickidx + 1;
         edgePt = [];
     end
+    assert(~isempty(thickness), "canny_measurement:thickness_error", "Thickness array empty. Check that image is valid.")
     thickness = thickness(thickness ~= 0); % remove single thicknesses from thickness array
-    assert(~isempty(thickness), "Thickness array empty. Check that image is valid.")
     end
 end
