@@ -8,21 +8,26 @@ for i = 1:length(files)
     sample_names(i) = sample_name;
 end
 
+BackgroundSubtraction = strings(length(data), 1);
+
 for i = 1:length(data)
     Mean(i) = data(i).mean;
     StdDeviation(i) = data(i).std;
     Min(i) = data(i).min;
     Max(i) = data(i).max;
     N(i) = data(i).n;
+    BackgroundSubtraction(i, 1) = data(i).parameters.args.background_subtraction;
 end
+
 Mean = Mean';
 StdDeviation = StdDeviation';
 Min = Min';
 Max = Max';
 N = N';
+% BackgroundSubtraction = BackgroundSubtraction';
 sample_names = sample_names';
 
-T = table(Mean, StdDeviation, Min, Max, N, 'RowNames', sample_names);
+T = table(Mean, StdDeviation, Min, Max, N, BackgroundSubtraction, 'RowNames', sample_names);
 
 saveToExcel = input('Save this data to an Excel file? [Y/N] ', 's');
 if saveToExcel == 'Y'
