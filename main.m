@@ -22,7 +22,7 @@ gaussian_std = 10;
 % background subtraction method: can be "none" or "imsubtract"
 for i = 1:length(files)
     fullpath = string(fullfile(path, files(i)));
-    parameter_struct(i) = imagej_csv_image_loader(fullpath, width, threshold, gaussian_std, "none");
+    parameter_struct(i) = imagej_csv_image_loader(fullpath, width, threshold, gaussian_std, "none", false);
 end
 %% Step 2a.2. Batch process files from parameter struct
 

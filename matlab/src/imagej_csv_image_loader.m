@@ -42,13 +42,14 @@
 %       * Initial implementation
 %
 
-function [parameter_struct] = imagej_csv_image_loader(csv_path, width, canny_threshold, canny_std, background_subtraction)
+function [parameter_struct] = imagej_csv_image_loader(csv_path, width, canny_threshold, canny_std, background_subtraction, transmission_exist)
     arguments
         csv_path {mustBeTextScalar, mustBeFile}
         width (1,1) double {mustBeInteger} = 40
         canny_threshold (2,1) double {mustBeVector, mustBeInRange(canny_threshold, 0.0, 1.0)} = [0.01 0.2]
         canny_std (1,1) double {mustBeInteger} = 10
         background_subtraction string {mustBeMember(background_subtraction, {'none', 'imsubtract'})} = "imsubtract"
+        transmission_exist bool = true
     end
 
     % Load csv into table
@@ -56,55 +57,108 @@ function [parameter_struct] = imagej_csv_image_loader(csv_path, width, canny_thr
 
     % Specify method
     parameter_struct.method_type = "ImageJ_Canny";
-
-    % Intialize images, check the files exist, and they are the same shape
-    reflection_image_path = convertCharsToStrings(csv_data.Reflection);
-    transmission_image_path = convertCharsToStrings(csv_data.Transmission);
-    assert(isfile(reflection_image_path), "File at path to reflection image %s must exist.", reflection_image_path);
-    assert(isfile(transmission_image_path), "File at path to transmission image %s must exist.", transmission_image_path);
+    if transmission_exist
+            % Intialize images, check the files exist, and they are the same shape
+        reflection_image_path = convertCharsToStrings(csv_data.Reflection);
+        transmission_image_path = convertCharsToStrings(csv_data.Transmission);
+        assert(isfile(reflection_image_path), "File at path to reflection image %s must exist.", reflection_image_path);
+        assert(isfile(transmission_image_path), "File at path to transmission image %s must exist.", transmission_image_path);
+        
+        parameter_struct.args.reflection_image_path = reflection_image_path;
+        parameter_struct.args.transmission_image_path = transmission_image_path;
+        
+        try
+            reflection_image = imread(reflection_image_path);
+        catch ME
+            warning('Could not read reflection image at %s', reflection_image_path);
+            rethrow(ME);
+        end
     
-    parameter_struct.args.reflection_image_path = reflection_image_path;
-    parameter_struct.args.transmission_image_path = transmission_image_path;
+        try
+            transmission_image = imread(transmission_image_path);
+        catch ME
+            warning('Could not read transmission image at %s', transmission_image_path);
+            rethrow(ME);
+        end
+        
+        assert(isequal(size(reflection_image), size(transmission_image)), "Dimension mismatch: reflection and transmission images must be same size. \n Check that both have the same number of rows and cols, as well as that they are in the same colorspace.");
+        
+        % we don't need to do this yet
+        % parameter_struct.args.reflection_image = double(reflection_image);
+        % parameter_struct.args.transmission_image = double(transmission_image);
     
-    try
-        reflection_image = imread(reflection_image_path);
-    catch ME
-        warning('Could not read reflection image at %s', reflection_image_path);
-        rethrow(ME);
+        % Initialize position and angle parameters from CSV
+        parameter_struct.args.angle = csv_data.Angle;
+        
+        % check that x position are equal to the integer value
+        parameter_struct.args.reflection_pos1 = [csv_data.x1_r; csv_data.y1_r];
+        parameter_struct.args.reflection_pos2 = [csv_data.x2_r; csv_data.y2_r];
+        parameter_struct.args.transmission_pos1 = [csv_data.x1_t; csv_data.y1_t];
+        parameter_struct.args.transmission_pos2 = [csv_data.x2_t; csv_data.y2_t];
+        
+        assert(isequal(round(parameter_struct.args.reflection_pos1(1)), round(parameter_struct.args.reflection_pos2(1))), "Reflection x positions must be the same. \n This probably that shift was not held when drawing line.")
+        assert(isequal(round(parameter_struct.args.transmission_pos1(1)), round(parameter_struct.args.transmission_pos2(1))), "Transmission x positions must be the same. \n This probably that shift was not held when drawing line.")
+    
+        % conversion factor
+        parameter_struct.args.conversion = csv_data.Conversion;
+        
+        % assign parameters for Canny method
+        parameter_struct.args.width = width;
+        parameter_struct.args.radius = round(parameter_struct.args.width / 2);
+        parameter_struct.args.canny_threshold = canny_threshold;
+        parameter_struct.args.canny_std = canny_std;
+        parameter_struct.args.background_subtraction = background_subtraction;
+    else
+                    % Intialize images, check the files exist, and they are the same shape
+        reflection_image_path = convertCharsToStrings(csv_data.Reflection);
+%         transmission_image_path = convertCharsToStrings(csv_data.Transmission);
+        assert(isfile(reflection_image_path), "File at path to reflection image %s must exist.", reflection_image_path);
+%         assert(isfile(transmission_image_path), "File at path to transmission image %s must exist.", transmission_image_path);
+        
+        parameter_struct.args.reflection_image_path = reflection_image_path;
+%         parameter_struct.args.transmission_image_path = transmission_image_path;
+        
+        try
+            reflection_image = imread(reflection_image_path);
+        catch ME
+            warning('Could not read reflection image at %s', reflection_image_path);
+            rethrow(ME);
+        end
+    
+%         try
+%             transmission_image = imread(transmission_image_path);
+%         catch ME
+%             warning('Could not read transmission image at %s', transmission_image_path);
+%             rethrow(ME);
+%         end
+        
+%         assert(isequal(size(reflection_image), size(transmission_image)), "Dimension mismatch: reflection and transmission images must be same size. \n Check that both have the same number of rows and cols, as well as that they are in the same colorspace.");
+        
+        % we don't need to do this yet
+        % parameter_struct.args.reflection_image = double(reflection_image);
+        % parameter_struct.args.transmission_image = double(transmission_image);
+    
+        % Initialize position and angle parameters from CSV
+        parameter_struct.args.angle = csv_data.Angle;
+        
+        % check that x position are equal to the integer value
+        parameter_struct.args.reflection_pos1 = [csv_data.x1_r; csv_data.y1_r];
+        parameter_struct.args.reflection_pos2 = [csv_data.x2_r; csv_data.y2_r];
+%         parameter_struct.args.transmission_pos1 = [csv_data.x1_t; csv_data.y1_t];
+%         parameter_struct.args.transmission_pos2 = [csv_data.x2_t; csv_data.y2_t];
+        
+        assert(isequal(round(parameter_struct.args.reflection_pos1(1)), round(parameter_struct.args.reflection_pos2(1))), "Reflection x positions must be the same. \n This probably that shift was not held when drawing line.")
+%         assert(isequal(round(parameter_struct.args.transmission_pos1(1)), round(parameter_struct.args.transmission_pos2(1))), "Transmission x positions must be the same. \n This probably that shift was not held when drawing line.")
+    
+        % conversion factor
+        parameter_struct.args.conversion = csv_data.Conversion;
+        
+        % assign parameters for Canny method
+        parameter_struct.args.width = width;
+        parameter_struct.args.radius = round(parameter_struct.args.width / 2);
+        parameter_struct.args.canny_threshold = canny_threshold;
+        parameter_struct.args.canny_std = canny_std;
+        parameter_struct.args.background_subtraction = background_subtraction;
     end
-
-    try
-        transmission_image = imread(transmission_image_path);
-    catch ME
-        warning('Could not read transmission image at %s', transmission_image_path);
-        rethrow(ME);
-    end
     
-    assert(isequal(size(reflection_image), size(transmission_image)), "Dimension mismatch: reflection and transmission images must be same size. \n Check that both have the same number of rows and cols, as well as that they are in the same colorspace.");
-    
-    % we don't need to do this yet
-    % parameter_struct.args.reflection_image = double(reflection_image);
-    % parameter_struct.args.transmission_image = double(transmission_image);
-
-    % Initialize position and angle parameters from CSV
-    parameter_struct.args.angle = csv_data.Angle;
-    
-    % check that x position are equal to the integer value
-    parameter_struct.args.reflection_pos1 = [csv_data.x1_r; csv_data.y1_r];
-    parameter_struct.args.reflection_pos2 = [csv_data.x2_r; csv_data.y2_r];
-    parameter_struct.args.transmission_pos1 = [csv_data.x1_t; csv_data.y1_t];
-    parameter_struct.args.transmission_pos2 = [csv_data.x2_t; csv_data.y2_t];
-    
-    assert(isequal(round(parameter_struct.args.reflection_pos1(1)), round(parameter_struct.args.reflection_pos2(1))), "Reflection x positions must be the same. \n This probably that shift was not held when drawing line.")
-    assert(isequal(round(parameter_struct.args.transmission_pos1(1)), round(parameter_struct.args.transmission_pos2(1))), "Transmission x positions must be the same. \n This probably that shift was not held when drawing line.")
-
-    % conversion factor
-    parameter_struct.args.conversion = csv_data.Conversion;
-    
-    % assign parameters for Canny method
-    parameter_struct.args.width = width;
-    parameter_struct.args.radius = round(parameter_struct.args.width / 2);
-    parameter_struct.args.canny_threshold = canny_threshold;
-    parameter_struct.args.canny_std = canny_std;
-    parameter_struct.args.background_subtraction = background_subtraction;
 end
