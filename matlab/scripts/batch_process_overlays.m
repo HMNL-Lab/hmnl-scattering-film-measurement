@@ -6,7 +6,7 @@ for i = 1:length(files)
     [folder, sample_name, ext] = fileparts(fullpath);
     data = read_data_from_h5_or_json(fullpath);
     image = overlay_edges(data);
-    save_to = fullfile(folder, strjoin([sample_name, ".tif"], ''));
+    save_to = fullfile(dir, strjoin([sample_name, "_overlay.tif"], ''));
     if isfile(save_to)
         warning('File exists.')
         str = input('[Y/N] to overwrite: ', 's');

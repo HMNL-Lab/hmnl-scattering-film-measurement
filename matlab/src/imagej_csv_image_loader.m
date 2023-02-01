@@ -14,7 +14,7 @@
 %   canny_threshold - (optional, mustBeVector, both elements between 0 and 1) [2 X 1] Hysteresis thresholds for Canny method; defaults to [0.01, 0.2]
 %   canny_std - (optional, double) [1 X 1] Gaussian standard deviation for Canny method; defaults to 10
 %   background_subtraction - (optional, string, can be 'none','imsubtract'); defaults to 'imsubtract'. Whether reflection image should be background subtracted using transmission image (imsubtract) or not (none)
-%
+%   transmission_exist - (bool)
 % OUTPUT:
 %   parameter_struct - (struct) struct with fields:
 %       method_type: "ImageJ_Canny"
@@ -43,14 +43,14 @@
 %
 
 function [parameter_struct] = imagej_csv_image_loader(csv_path, width, canny_threshold, canny_std, background_subtraction, transmission_exist)
-    arguments
-        csv_path {mustBeTextScalar, mustBeFile}
-        width (1,1) double {mustBeInteger} = 40
-        canny_threshold (2,1) double {mustBeVector, mustBeInRange(canny_threshold, 0.0, 1.0)} = [0.01 0.2]
-        canny_std (1,1) double {mustBeInteger} = 10
-        background_subtraction string {mustBeMember(background_subtraction, {'none', 'imsubtract'})} = "imsubtract"
-        transmission_exist bool = true
-    end
+%     arguments
+%         csv_path {mustBeTextScalar, mustBeFile}
+%         width (1,1) double {mustBeInteger} = 40
+%         canny_threshold (2,1) double {mustBeVector, mustBeInRange(canny_threshold, 0.0, 1.0)} = [0.01 0.2]
+%         canny_std (1,1) double {mustBeInteger} = 10
+%         background_subtraction string {mustBeMember(background_subtraction, {'none', 'imsubtract'})} = "imsubtract"
+% %         transmission_exist bool = true
+%     end
 
     % Load csv into table
     csv_data = readtable(convertCharsToStrings(csv_path));

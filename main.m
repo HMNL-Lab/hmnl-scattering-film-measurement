@@ -20,9 +20,13 @@ threshold = [0.01, 0.2];
 gaussian_std = 10;
 
 % background subtraction method: can be "none" or "imsubtract"
+background_subtraction = "imsubtract";
+
+% transmission image exists?
+transmission_exist = true;
 for i = 1:length(files)
     fullpath = string(fullfile(path, files(i)));
-    parameter_struct(i) = imagej_csv_image_loader(fullpath, width, threshold, gaussian_std, "none", false);
+    parameter_struct(i) = imagej_csv_image_loader(fullpath, width, threshold, gaussian_std, background_subtraction, transmission_exist);
 end
 %% Step 2a.2. Batch process files from parameter struct
 
@@ -49,7 +53,7 @@ end
 folder = uigetdir('C:\Users\noahm\Documents\Rutgers\HMNL\hmnl-scattering-film-measurement\data\csv_data\', 'Select directory to save new JSON/HDF5 files to');
 for i = 1:length(data)
     [~, sample_name, ~] = fileparts(data(i).parameters.args.reflection_image_path);
-    save_data_to_h5_or_json(data(i), sample_name, folder, "hdf5")
+    save_data_to_h5_or_json(data(i), sample_name, folder, "json")
 end
 
 %% Step 2a.4. Generated edge overlays
