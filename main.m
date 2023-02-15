@@ -24,10 +24,19 @@ background_subtraction = "imsubtract";
 
 % transmission image exists?
 transmission_exist = true;
+
+files = string(files);
+path = string(path);
+
 for i = 1:length(files)
-    fullpath = string(fullfile(path, files(i)));
+    if length(string(files)) == 1
+        fullpath = fullfile(path, files);
+    else
+        fullpath = fullfile(path, files(i));
+    end
     parameter_struct(i) = imagej_csv_image_loader(fullpath, width, threshold, gaussian_std, background_subtraction, transmission_exist);
 end
+
 %% Step 2a.2. Batch process files from parameter struct
 
 for i = 1:length(parameter_struct)

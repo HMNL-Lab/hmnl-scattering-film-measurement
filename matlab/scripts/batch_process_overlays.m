@@ -1,8 +1,14 @@
 dir = uigetdir('C:\Users\noahm\Documents\Rutgers\HMNL\hmnl-scattering-film-measurement\test-scripts\tmp\', 'Select directory to save new overlay image files to');
 [files, path] = uigetfile({'*.json;*.h5;*.hdf5'},'Select optical thickness files: ', 'MultiSelect','on');
+files = string(files);
+path = string(path);
 
 for i = 1:length(files)
-    fullpath = string(fullfile(path, files(i)));
+    if length(string(files)) == 1
+        fullpath = fullfile(path, files);
+    else
+        fullpath = fullfile(path, files(i));
+    end
     [folder, sample_name, ext] = fileparts(fullpath);
     data = read_data_from_h5_or_json(fullpath);
     image = overlay_edges(data);
