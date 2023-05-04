@@ -108,7 +108,7 @@ function [data] = canny_measurement(parameter_struct)
         thickidx = thickidx + 1;
         edgePt = [];
     end
-    assert(~isempty(thickness), "canny_measurement:thickness_error", "Thickness array empty. Check that image is valid.")
     thickness = thickness(thickness ~= 0); % remove single thicknesses from thickness array
+    assert(~isempty(thickness), "canny_measurement:thickness_error", "Thickness array empty. Check that image is valid.")
     end
 end
